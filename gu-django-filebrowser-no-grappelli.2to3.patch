@@ -1,0 +1,392 @@
+--- gu-django-filebrowser-no-grappelli/filebrowser/__init__.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/__init__.py	(refactored)
+@@ -5,7 +5,7 @@
+ 
+ 
+ def get_default_dir():
+-    return getattr(_dirs, 'current_dir', u'')
++    return getattr(_dirs, 'current_dir', '')
+ 
+ 
+ def set_default_dir(dir):
+--- gu-django-filebrowser-no-grappelli/filebrowser/base.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/base.py	(refactored)
+@@ -73,7 +73,7 @@
+         """
+         Extension.
+         """
+-        return u"%s" % os.path.splitext(self.filename)[1]
++        return "%s" % os.path.splitext(self.filename)[1]
+     extension = property(_extension)
+     
+     def _filetype_checked(self):
+@@ -102,7 +102,7 @@
+         """
+         directory_re = re.compile(r'^(%s)' % (fb_settings.DIRECTORY))
+         value = directory_re.sub('', self.path)
+-        return u"%s" % value
++        return "%s" % value
+     path_relative_directory = property(_path_relative_directory)
+     
+     def _url_relative(self):
+@@ -131,7 +131,7 @@
+         Thumbnail URL.
+         """
+         if self.filetype == "Image":
+-            return u"%s" % url_join(fb_settings.MEDIA_URL, get_version_path(self.path, ADMIN_THUMBNAIL))
++            return "%s" % url_join(fb_settings.MEDIA_URL, get_version_path(self.path, ADMIN_THUMBNAIL))
+         else:
+             return ""
+     url_thumbnail = property(_url_thumbnail)
+@@ -140,9 +140,9 @@
+         if self.filetype_checked == "Folder":
+             directory_re = re.compile(r'^(%s)' % (fb_settings.DIRECTORY))
+             value = directory_re.sub('', self.path)
+-            return u"%s" % value
+-        else:
+-            return u"%s" % url_join(fb_settings.MEDIA_URL, self.path)
++            return "%s" % value
++        else:
++            return "%s" % url_join(fb_settings.MEDIA_URL, self.path)
+     
+     def _dimensions(self):
+         """
+--- gu-django-filebrowser-no-grappelli/filebrowser/fields.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/fields.py	(refactored)
+@@ -55,7 +55,7 @@
+     widget = FileBrowseWidget
+     
+     default_error_messages = {
+-        'extension': _(u'Extension %(ext)s is not allowed. Only %(allowed)s is allowed.'),
++        'extension': _('Extension %(ext)s is not allowed. Only %(allowed)s is allowed.'),
+     }
+     
+     def __init__(self, max_length=None, min_length=None,
+@@ -79,9 +79,7 @@
+         return value
+ 
+ 
+-class FileBrowseField(Field):
+-    __metaclass__ = models.SubfieldBase
+-    
++class FileBrowseField(Field, metaclass=models.SubfieldBase):
+     def __init__(self, *args, **kwargs):
+         self.directory = kwargs.pop('directory', '')
+         self.extensions = kwargs.pop('extensions', '')
+@@ -96,7 +94,7 @@
+     def get_db_prep_value(self, value, connection, prepared=False):
+         if value is None:
+             return None
+-        return unicode(value)
++        return str(value)
+         
+     
+     def get_manipulator_field_objs(self):
+--- gu-django-filebrowser-no-grappelli/filebrowser/forms.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/forms.py	(refactored)
+@@ -23,16 +23,16 @@
+         self.path = path
+         super(MakeDirForm, self).__init__(*args, **kwargs)
+         
+-    dir_name = forms.CharField(widget=forms.TextInput(attrs=dict({ 'class': 'vTextField' }, max_length=50, min_length=3)), label=_(u'Name'), help_text=_(u'Only letters, numbers, underscores, spaces and hyphens are allowed.'), required=True)
++    dir_name = forms.CharField(widget=forms.TextInput(attrs=dict({ 'class': 'vTextField' }, max_length=50, min_length=3)), label=_('Name'), help_text=_('Only letters, numbers, underscores, spaces and hyphens are allowed.'), required=True)
+     
+     def clean_dir_name(self):
+         if self.cleaned_data['dir_name']:
+             # only letters, numbers, underscores, spaces and hyphens are allowed.
+             if not alnum_name_re.search(self.cleaned_data['dir_name']):
+-                raise forms.ValidationError(_(u'Only letters, numbers, underscores, spaces and hyphens are allowed.'))
++                raise forms.ValidationError(_('Only letters, numbers, underscores, spaces and hyphens are allowed.'))
+             # Folder must not already exist.
+             if os.path.isdir(os.path.join(self.path, convert_filename(self.cleaned_data['dir_name']))):
+-                raise forms.ValidationError(_(u'The Folder already exists.'))
++                raise forms.ValidationError(_('The Folder already exists.'))
+         return convert_filename(self.cleaned_data['dir_name'])
+ 
+ 
+@@ -46,18 +46,18 @@
+         self.file_extension = file_extension
+         super(RenameForm, self).__init__(*args, **kwargs)
+     
+-    name = forms.CharField(widget=forms.TextInput(attrs=dict({ 'class': 'vTextField' }, max_length=50, min_length=3)), label=_(u'New Name'), help_text=_('Only letters, numbers, underscores, spaces and hyphens are allowed.'), required=True)
++    name = forms.CharField(widget=forms.TextInput(attrs=dict({ 'class': 'vTextField' }, max_length=50, min_length=3)), label=_('New Name'), help_text=_('Only letters, numbers, underscores, spaces and hyphens are allowed.'), required=True)
+     
+     def clean_name(self):
+         if self.cleaned_data['name']:
+             # only letters, numbers, underscores, spaces and hyphens are allowed.
+             if not alnum_name_re.search(self.cleaned_data['name']):
+-                raise forms.ValidationError(_(u'Only letters, numbers, underscores, spaces and hyphens are allowed.'))
++                raise forms.ValidationError(_('Only letters, numbers, underscores, spaces and hyphens are allowed.'))
+             #  folder/file must not already exist.
+             if os.path.isdir(os.path.join(self.path, convert_filename(self.cleaned_data['name']))):
+-                raise forms.ValidationError(_(u'The Folder already exists.'))
++                raise forms.ValidationError(_('The Folder already exists.'))
+             elif os.path.isfile(os.path.join(self.path, convert_filename(self.cleaned_data['name']) + self.file_extension)):
+-                raise forms.ValidationError(_(u'The File already exists.'))
++                raise forms.ValidationError(_('The File already exists.'))
+         return convert_filename(self.cleaned_data['name'])
+ 
+ 
+--- gu-django-filebrowser-no-grappelli/filebrowser/functions.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/functions.py	(refactored)
+@@ -138,10 +138,10 @@
+     # (seq[i].attr, i, seq[i]) and sort it. The second item of tuple is needed not
+     # only to provide stable sorting, but mainly to eliminate comparison of objects
+     # (which can be expensive or prohibited) in case of equal attribute values.
+-    intermed = map(map(getattr, seq, (attr,)*len(seq)), range(len(seq)), seq)
++    intermed = list(map(list(map(getattr, seq, (attr,)*len(seq))), list(range(len(seq))), seq))
+     if intermed:
+         intermed = sorted(intermed)
+-    return map(operator.getitem, intermed, (-1,) * len(intermed))
++    return list(map(operator.getitem, intermed, (-1,) * len(intermed)))
+ 
+ 
+ def url_join(*args):
+@@ -268,7 +268,7 @@
+     
+     file_extension = os.path.splitext(filename)[1].lower()
+     file_type = ''
+-    for k,v in EXTENSIONS.items():
++    for k,v in list(EXTENSIONS.items()):
+         for extension in v:
+             if file_extension == extension.lower():
+                 file_type = k
+@@ -282,7 +282,7 @@
+     
+     file_extension = os.path.splitext(filename)[1].lower()
+     select_types = []
+-    for k,v in SELECT_FORMATS.iteritems():
++    for k,v in SELECT_FORMATS.items():
+         for extension in v:
+             if file_extension == extension.lower():
+                 select_types.append(k)
+--- gu-django-filebrowser-no-grappelli/filebrowser/settings.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/settings.py	(refactored)
+@@ -97,7 +97,7 @@
+ # Exclude files matching any of the following regular expressions
+ # Default is to exclude 'thumbnail' style naming of image-thumbnails.
+ EXTENSION_LIST = []
+-for exts in EXTENSIONS.values():
++for exts in list(EXTENSIONS.values()):
+     EXTENSION_LIST += exts
+ EXCLUDE = getattr(settings, 'FILEBROWSER_EXCLUDE', (r'_(%(exts)s)_.*_q\d{1,3}\.(%(exts)s)' % {'exts': ('|'.join(EXTENSION_LIST))},))
+ # Max. Upload Size in Bytes.
+--- gu-django-filebrowser-no-grappelli/filebrowser/views.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/views.py	(refactored)
+@@ -37,16 +37,16 @@
+ from filebrowser.decorators import flash_login_required
+ 
+ try:
+-    import unicode
++    import str
+ except:
+-    def unicode(s):
++    def str(s):
+         return s
+ 
+ # Precompile regular expressions
+ filter_re = []
+ for exp in EXCLUDE:
+    filter_re.append(re.compile(exp))
+-for k,v in VERSIONS.items():
++for k,v in list(VERSIONS.items()):
+     exp = (r'_%s.(%s)') % (k, '|'.join(EXTENSION_LIST))
+     filter_re.append(re.compile(exp))
+ 
+@@ -86,7 +86,7 @@
+     # INITIAL VARIABLES
+     results_var = {'results_total': 0, 'results_current': 0, 'delete_total': 0, 'images_total': 0, 'select_total': 0 }
+     counter = {}
+-    for k,v in EXTENSIONS.items():
++    for k,v in list(EXTENSIONS.items()):
+         counter[k] = 0
+     
+     dir_list = os.listdir(abs_path)
+@@ -162,7 +162,7 @@
+         'results_var': results_var,
+         'counter': counter,
+         'query': query,
+-        'title': _(u'FileBrowser'),
++        'title': _('FileBrowser'),
+         'settings_var': get_settings_var(),
+         'breadcrumbs': get_breadcrumbs(query, path),
+         'breadcrumbs_title': ""
+@@ -222,10 +222,10 @@
+     return render_to_response('filebrowser/makedir.html', {
+         'form': form,
+         'query': query,
+-        'title': _(u'New Folder'),
++        'title': _('New Folder'),
+         'settings_var': get_settings_var(),
+         'breadcrumbs': get_breadcrumbs(query, path),
+-        'breadcrumbs_title': _(u'New Folder')
++        'breadcrumbs_title': _('New Folder')
+     }, context_instance=Context(request))
+ mkdir = staff_member_required(never_cache(mkdir))
+ 
+@@ -251,11 +251,11 @@
+     
+     return render_to_response('filebrowser/upload.html', {
+         'query': query,
+-        'title': _(u'Select files to upload'),
++        'title': _('Select files to upload'),
+         'settings_var': get_settings_var(),
+         'session_key': session_key,
+         'breadcrumbs': get_breadcrumbs(query, path),
+-        'breadcrumbs_title': _(u'Upload')
++        'breadcrumbs_title': _('Upload')
+     }, context_instance=Context(request))
+ upload = staff_member_required(never_cache(upload))
+ 
+@@ -277,7 +277,7 @@
+     
+     fileArray = {}
+     if request.method == 'POST':
+-        for k,v in request.POST.items():
++        for k,v in list(request.POST.items()):
+             if k != "folder":
+                 v = convert_filename(v)
+                 if os.path.isfile(smart_str(_check_access(request, folder, v))):
+@@ -374,7 +374,7 @@
+                 return HttpResponseRedirect(redirect_url)
+             except OSError as e:
+                 # todo: define error message
+-                msg = unicode(e)
++                msg = str(e)
+         else:
+             try:
+                 # PRE DELETE SIGNAL
+@@ -390,7 +390,7 @@
+                 return HttpResponseRedirect(redirect_url)
+             except OSError as e:
+                 # todo: define error message
+-                msg = unicode(e)
++                msg = str(e)
+ 
+     if msg:
+         messages.error(request, e)
+@@ -461,10 +461,10 @@
+         'form': form,
+         'query': query,
+         'file_extension': file_extension,
+-        'title': _(u'Rename "%s"') % filename,
++        'title': _('Rename "%s"') % filename,
+         'settings_var': get_settings_var(),
+         'breadcrumbs': get_breadcrumbs(query, path),
+-        'breadcrumbs_title': _(u'Rename')
++        'breadcrumbs_title': _('Rename')
+     }, context_instance=Context(request))
+ rename = staff_member_required(never_cache(rename))
+ 
+@@ -490,10 +490,10 @@
+     return render_to_response('filebrowser/versions.html', {
+         'original': path_to_url(os.path.join(fb_settings.DIRECTORY, path, filename)),
+         'query': query,
+-        'title': _(u'Versions for "%s"') % filename,
++        'title': _('Versions for "%s"') % filename,
+         'settings_var': get_settings_var(),
+         'breadcrumbs': get_breadcrumbs(query, path),
+-        'breadcrumbs_title': _(u'Versions for "%s"') % filename
++        'breadcrumbs_title': _('Versions for "%s"') % filename
+     }, context_instance=Context(request))
+ versions = staff_member_required(never_cache(versions))
+ 
+--- gu-django-filebrowser-no-grappelli/filebrowser/management/commands/version_generator.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/management/commands/version_generator.py	(refactored)
+@@ -12,7 +12,7 @@
+         filter_re = []
+         for exp in EXCLUDE:
+            filter_re.append(re.compile(exp))
+-        for k,v in VERSIONS.iteritems():
++        for k,v in VERSIONS.items():
+             exp = (r'_%s.(%s)') % (k, '|'.join(EXTENSION_LIST))
+             filter_re.append(re.compile(exp))
+             
+@@ -37,7 +37,7 @@
+                     self.createVersions(os.path.join(dirpath, filename))
+     
+     def createVersions(self, path):
+-        print "generating versions for: ", path
++        print("generating versions for: ", path)
+         from filebrowser.settings import VERSIONS
+         from filebrowser.functions import version_generator
+         for version in VERSIONS:
+--- gu-django-filebrowser-no-grappelli/filebrowser/templatetags/fb_csrf.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/templatetags/fb_csrf.py	(refactored)
+@@ -13,9 +13,9 @@
+         csrf_token = context.get('csrf_token', None)
+         if csrf_token:
+             if csrf_token == 'NOTPROVIDED':
+-                return mark_safe(u"")
++                return mark_safe("")
+             else:
+-                return mark_safe(u"<div style='display:none'><input type='hidden' name='csrfmiddlewaretoken' value='%s' /></div>" % (csrf_token))
++                return mark_safe("<div style='display:none'><input type='hidden' name='csrfmiddlewaretoken' value='%s' /></div>" % (csrf_token))
+         else:
+             # It's very probable that the token is missing because of
+             # misconfiguration, so we raise a warning
+@@ -23,7 +23,7 @@
+             if settings.DEBUG:
+                 import warnings
+                 warnings.warn("A {% csrf_token %} was used in a template, but the context did not provide the value.  This is usually caused by not using RequestContext.")
+-            return u''
++            return ''
+ 
+ def fb_csrf_token(parser, token):
+     return CsrfTokenNode()
+--- gu-django-filebrowser-no-grappelli/filebrowser/templatetags/fb_pagination.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/templatetags/fb_pagination.py	(refactored)
+@@ -22,24 +22,24 @@
+         # If there are 10 or fewer pages, display links to every page.
+         # Otherwise, do some fancy
+         if paginator.num_pages <= 10:
+-            page_range = range(paginator.num_pages)
++            page_range = list(range(paginator.num_pages))
+         else:
+             # Insert "smart" pagination links, so that there are always ON_ENDS
+             # links at either end of the list of pages, and there are always
+             # ON_EACH_SIDE links at either end of the "current page" link.
+             page_range = []
+             if page_num > (ON_EACH_SIDE + ON_ENDS):
+-                page_range.extend(range(0, ON_EACH_SIDE - 1))
++                page_range.extend(list(range(0, ON_EACH_SIDE - 1)))
+                 page_range.append(DOT)
+-                page_range.extend(range(page_num - ON_EACH_SIDE, page_num + 1))
++                page_range.extend(list(range(page_num - ON_EACH_SIDE, page_num + 1)))
+             else:
+-                page_range.extend(range(0, page_num + 1))
++                page_range.extend(list(range(0, page_num + 1)))
+             if page_num < (paginator.num_pages - ON_EACH_SIDE - ON_ENDS - 1):
+-                page_range.extend(range(page_num + 1, page_num + ON_EACH_SIDE + 1))
++                page_range.extend(list(range(page_num + 1, page_num + ON_EACH_SIDE + 1)))
+                 page_range.append(DOT)
+-                page_range.extend(range(paginator.num_pages - ON_ENDS, paginator.num_pages))
++                page_range.extend(list(range(paginator.num_pages - ON_ENDS, paginator.num_pages)))
+             else:
+-                page_range.extend(range(page_num + 1, paginator.num_pages))
++                page_range.extend(list(range(page_num + 1, paginator.num_pages)))
+     
+     return {
+         'page_range': page_range,
+--- gu-django-filebrowser-no-grappelli/filebrowser/templatetags/fb_tags.py	(original)
++++ gu-django-filebrowser-no-grappelli/filebrowser/templatetags/fb_tags.py	(refactored)
+@@ -52,16 +52,16 @@
+     if new_params is None: new_params = {}
+     if remove is None: remove = []
+     for r in remove:
+-        for k in p.keys():
++        for k in list(p.keys()):
+             #if k.startswith(r):
+             if k == r:
+                 del p[k]
+-    for k, v in new_params.items():
++    for k, v in list(new_params.items()):
+         if k in p and v is None:
+             del p[k]
+         elif v is not None:
+             p[k] = v
+-    return '?' + '&'.join([u'%s=%s' % (urlquote(k), urlquote(v)) for k, v in p.items()])
++    return '?' + '&'.join(['%s=%s' % (urlquote(k), urlquote(v)) for k, v in list(p.items())])
+ 
+ 
+ def string_to_dict(string):
