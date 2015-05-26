@@ -11,7 +11,10 @@ from django.conf import settings
 from filebrowser.settings import *
 from filebrowser.conf import fb_settings
 from filebrowser.functions import get_file_type, url_join, is_selectable, get_version_path
-from django.utils.encoding import force_unicode
+try:
+    from django.utils.encoding import force_unicode
+except ImportError:
+    pass
 
 # PIL import
 if STRICT_PIL:
