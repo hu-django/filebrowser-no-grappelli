@@ -17,6 +17,12 @@ from filebrowser.base import FileObject
 from filebrowser.functions import url_to_path
 from filebrowser import get_default_dir
 
+try:
+    import unicode
+except ImportError:
+    def unicode(s):
+        return s
+
 
 class FileBrowseWidget(Input):
     input_type = 'text'

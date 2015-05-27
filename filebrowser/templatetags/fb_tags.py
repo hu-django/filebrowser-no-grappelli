@@ -52,7 +52,7 @@ def get_query_string(p, new_params=None, remove=None):
     if new_params is None: new_params = {}
     if remove is None: remove = []
     for r in remove:
-        for k in p.keys():
+        for k in tuple(p.keys()):
             #if k.startswith(r):
             if k == r:
                 del p[k]

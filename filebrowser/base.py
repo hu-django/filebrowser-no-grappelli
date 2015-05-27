@@ -14,7 +14,8 @@ from filebrowser.functions import get_file_type, url_join, is_selectable, get_ve
 try:
     from django.utils.encoding import force_unicode
 except ImportError:
-    pass
+    def force_unicode(s):
+        return s
 
 # PIL import
 if STRICT_PIL:

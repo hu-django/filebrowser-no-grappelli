@@ -141,9 +141,9 @@ def browse(request):
     # SORTING
     query['o'] = request.GET.get('o', DEFAULT_SORTING_BY)
     query['ot'] = request.GET.get('ot', DEFAULT_SORTING_ORDER)
-    files = sort_by_attr(files, request.GET.get('o', DEFAULT_SORTING_BY))
+    files = tuple(sort_by_attr(files, request.GET.get('o', DEFAULT_SORTING_BY)))
     if not request.GET.get('ot') and DEFAULT_SORTING_ORDER == "desc" or request.GET.get('ot') == "desc":
-        files.reverse()
+        files = tuple(reversed(files))
     
     p = Paginator(files, LIST_PER_PAGE)
     try:
