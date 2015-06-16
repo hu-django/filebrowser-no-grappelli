@@ -85,7 +85,7 @@ class FileBrowseFormField(forms.CharField):
         return value
 
 
-class FileBrowseField(Field):
+class FileBrowseField(CharField):
     __metaclass__ = models.SubfieldBase
     
     def __init__(self, *args, **kwargs):
@@ -99,12 +99,15 @@ class FileBrowseField(Field):
             return value
         return FileObject(url_to_path(value))
     
-    def get_db_prep_value(self, value, connection, prepared=False):
+    def get_prep_value(self, value):
+        value = self._get_val_from_obj(value)
         if value is None:
             return None
-        return unicode(value)
-        
-    
+        return value.url_save
+
+    def value_to_string(self, obj):
+        return self.get_prep_value(obj)
+
     def get_manipulator_field_objs(self):
         return [oldforms.TextField]
     
