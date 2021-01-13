@@ -1,72 +1,106 @@
 {% extends "admin/base_site.html" %}
 
 <!-- LOADING -->
-{% load i18n adminmedia fb_tags %}
+{% load static i18n l10n fb_tags %}
 
 <!-- STYLESHEETS -->
-{% block extrastyle %}
+{% block stylesheets %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />
-    <link rel="stylesheet" type="text/css" href="{{ settings_var.URL_FILEBROWSER_MEDIA }}css/filebrowser.css" />
-    <link rel="stylesheet" type="text/css" href="{{ settings_var.URL_FILEBROWSER_MEDIA }}uploadify/uploadify.css" />
+    <link rel="stylesheet" type="text/css" href="{% static "filebrowser/css/filebrowser.css" %}" />
 {% endblock %}
 
 <!-- JAVASCRIPTS -->
-{% block extrahead %}
+{% block javascripts %}
     {{ block.super }}
     <script type="text/javascript" src="../../jsi18n/"></script>
-    <script type="text/javascript" src="{% admin_media_prefix %}js/core.js"></script>
-
-    <script type="text/javascript" src="{{ settings_var.URL_FILEBROWSER_MEDIA }}uploadify/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="{{ settings_var.URL_FILEBROWSER_MEDIA }}uploadify/jquery.uploadify.v2.1.0.js"></script>
-    <script type="text/javascript" src="{{ settings_var.URL_FILEBROWSER_MEDIA }}uploadify/swfobject.js"></script>
-    <script type="text/javascript" src="{% admin_media_prefix %}js/admin/CollapsedFieldsets.js"></script>
+    <script type="text/javascript" src="{% static "filebrowser/js/fileuploader.js" %}"></script>
     <script type="text/javascript">
     (function($){
         $(document).ready(function() {
-            $('#id_file').uploadify({
-                'uploader'          : '{{ settings_var.URL_FILEBROWSER_MEDIA }}uploadify/uploadify.swf',
-                'script'            : '{% url fb_do_upload %}',
-                'scriptData'        : {'session_key': '{{session_key}}'},
-                'checkScript'       : '{% url fb_check %}',
-                'cancelImg'         : '{{ settings_var.URL_FILEBROWSER_MEDIA }}uploadify/cancel.png',
-                'auto'              : false,
-                'folder'            : '{{ query.dir }}',
-                'multi'             : true,
-                'fileDesc'          : '{% for extension in settings_var.EXTENSIONS.items %}{% ifnotequal extension.0 'Folder' %}{% for item in extension.1 %}*{{ item|safe }};{% endfor %}{% endifnotequal %}{% endfor %}',
-                'fileExt'           : '{% for extension in settings_var.EXTENSIONS.items %}{% ifnotequal extension.0 'Folder' %}{% for item in extension.1 %}*{{ item|safe }};{% endfor %}{% endifnotequal %}{% endfor %}',
-                'sizeLimit'         : {{ settings_var.MAX_UPLOAD_SIZE }},
-                'scriptAccess'      : 'sameDomain',
-                'queueSizeLimit'    : 50,
-                'simUploadLimit'    : 1,
-                'width'             : 300,
-                'height'            : 30,
-                'hideButton'        : false,
-                'wmode'             : 'transparent',
-                translations        : {
-                                      browseButton: '{% trans "BROWSE" %}',
-                                      error: '{% trans "An Error occured" %}',
-                                      completed: '{% trans "Completed" %}',
-                                      replaceFile: '{% trans "Do you want to replace the file" %}',
-                                      unitKb: '{% trans "KB" %}',
-                                      unitMb: '{% trans "MB" %}'
+            $("div#grp-content-container .grp-collapse").grp_collapsible({
+                on_init: function(elem, options) {
+                    // open collapse (and all collapse parents) in case of errors
+                    if (elem.find("ul.grp-errorlist").length > 0) {
+                        elem.removeClass("grp-closed")
+                            .addClass("grp-open");
+                        elem.parents(".grp-collapse")
+                            .removeClass("grp-closed")
+                            .addClass("grp-open");
+                    }
                 }
             });
-            $('input:submit').click(function(evt){
-                $('#id_file').uploadifyUpload();
-                return false;
-            });
-            $('a.cancel-link').click(function(evt){
-                $('#id_file').uploadifyClearQueue();
-                return false;
+        });
+    })(grp.jQuery);
+    (function($){
+        $(document).ready(function() {
+            var uploader = new qq.FileUploader({
+                element: $('#file-uploader').get(0),
+                action: '{% url 'filebrowser:fb_do_upload' %}',
+
+                template: '<div class="qq-uploader">' +
+                    '<div class="qq-upload-drop-area"><span>{% trans "Drop files here to upload" %}</span></div>' +
+                    '<div class="qq-upload-button">{% trans "Upload a file" %}</div>' +
+                    '<ul class="qq-upload-list"></ul>' +
+                '</div>',
+
+                fileTemplate: '<li>' +
+                    '<span class="qq-upload-file"></span>' +
+                    '<span class="qq-upload-spinner"></span>' +
+                    '<span class="qq-upload-size"></span>' +
+                    '<a class="qq-upload-cancel" href="#">{% trans "Cancel" %}</a>' +
+                    '<span class="qq-upload-failed-text">{% trans "Failed" %}</span>' +
+                    '<span class="qq-upload-complete"></span>' +
+                    '<div class="progress-bar"><div class="content"></div></div>' +
+                '</li>',
+
+                params: { 'csrf_token': '{{ csrf_token }}',
+                          'csrf_name': 'csrfmiddlewaretoken',
+                          'csrf_xname': 'X-CSRFToken',
+                          'folder': '{{ query.dir|escapejs }}', },
+
+                allowedExtensions: {% get_file_extensions request.GET %},
+                sizeLimit: {{ settings_var.MAX_UPLOAD_SIZE|unlocalize }},
+                minSizeLimit: 0,
+                debug: false,
+                // messages
+                messages: {
+                    typeError: "{% trans "{file} has invalid extension. Only {extensions} are allowed." %}",
+                    sizeError: "{% trans "{file} is too large, maximum file size is {sizeLimit}." %}",
+                    minSizeError: "{% trans "{file} is too small, minimum file size is {minSizeLimit}." %}",
+                    emptyError: "{% trans "{file} is empty, please select files again without it." %}",
+                    onLeave: "{% trans "The files are being uploaded, if you leave now the upload will be cancelled." %}"
+                },
+
+                getItem: function(id) {
+                    var items = $(this.element).find('.qq-upload-list li').get();
+                    var item = items.pop();
+
+                    while (typeof item != "undefined") {
+                        if (item.qqFileId == id) {
+                            return $(item);
+                        }
+                        item = items.pop();
+                    }
+                },
+                onProgress: function(id, fileName, loaded, total){
+                    var bar = this.getItem(id).find('.progress-bar .content');
+                    var new_width = '' + (loaded/total * 100) + '%';
+                    bar.css('width', new_width);
+                },
+                onComplete: function(id, fileName, resp){
+                    if (resp.success) {
+                        this.getItem(id).find('.qq-upload-file').html(resp.filename);
+                    }
+                },
+                showMessage: function(message){ alert(message); }
             });
         });
-    })(jQuery.noConflict());
+    })(grp.jQuery);
     </script>
 {% endblock %}
 
 <!-- COLTYPE/BODYCLASS -->
-{% block bodyclass %}change-form filebrowser{% if query.pop %} popup{% endif %}{% endblock %}
+{% block bodyclass %}change-form grp-filebrowser{% if query.pop %} grp-popup{% endif %}{% endblock %}
 {% block content-class %}content-flexible{% endblock %}
 
 <!-- BREADCRUMBS -->
@@ -74,43 +108,53 @@
 
 <!-- CONTENT -->
 {% block content %}
-<div id="content-main">
+<div id="grp-content-container">
     <form>
-        <fieldset class="module aligned">
-            <div class="row">
-                <input type="File" id="id_file" />
-            </div>
+        <fieldset class="grp-module aligned">
+        <div class="grp-row" id="file-uploader">
+            <noscript>
+                {% trans "Please enable Javascript to upload files." %}
+            </noscript>
+        </div>
         </fieldset>
-        <fieldset class="module aligned collapse closed">
-            <h2>{% trans "Help" %}</h2>
-            <div class="row">
-                {% for extension in settings_var.EXTENSIONS.items %}
-                    {% ifnotequal extension.0 'Folder' %}
-                        <div class="column span-4"><label class="required">{% if forloop.first %}{% trans "Allowed" %}:{% else %}&nbsp;{% endif %}</label></div>
-                        <div class="column span-12 last"><p>{{ extension.0|safe }} ({{ extension.1|join:", "|safe }})</p></div><br clear="all" />
-                    {% endifnotequal %}
-                {% endfor %}
+        <fieldset class="grp-module grp-collapse grp-closed">
+            <h2 class="grp-collapse-handler">{% trans "Help" %}</h2>
+            <div class="grp-row">
+                <div class="l-2c-fluid l-d-4">
+                    <div class="c-1"><label class="required">{% trans "Allowed" %}</label></div>
+                    <div class="c-2">
+                        <p class="grp-text">
+                        {% for extension in settings_var.EXTENSIONS.items %}
+                            {% ifnotequal extension.0 'Folder' %}
+                                <strong>{% trans extension.0|safe %}</strong> ({{ extension.1|join:", "|safe }})<br />
+                            {% endifnotequal %}
+                        {% endfor %}
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-                <div class="column span-4"><label class="required">{% trans "Max. Filesize" %}:</label></div>
-                <div class="column span-12 last"><p>{{ settings_var.MAX_UPLOAD_SIZE|filesizeformat }}</p></div><br clear="all" />
+            <div class="grp-row">
+                <div class="l-2c-fluid l-d-4">
+                    <div class="c-1"><label class="required">{% trans "Max. Filesize" %}</label></div>
+                    <div class="c-2"><p class="grp-text">{{ settings_var.MAX_UPLOAD_SIZE|filesizeformat }}</p></div>
+                </div>
             </div>
-            {% if settings_var.CONVERT_FILENAME %}
-                <div class="row">
-                    <div class="column span-16 last"><p>
-                        {% trans "The Name will be converted to lowercase. Spaces will be replaced with underscores." %}
-                    </p></div><br clear="all" />
+            {% if settings_var.NORMALIZE_FILENAME or settings_var.CONVERT_FILENAME %}
+                <div class="grp-row">
+                    <div class="l-2c-fluid l-d-4">
+                        <div class="c-1"><label class="required">{% trans "Filename" %}</label></div>
+                        <div class="c-2">
+                            {% if settings_var.NORMALIZE_FILENAME %}
+                                <p class="grp-text">{% trans "The Name will be normalized by converting or stripping all non-standard characters." %}</p>
+                            {% endif %}
+                            {% if settings_var.CONVERT_FILENAME %}
+                                <p class="grp-text">{% trans "The Name will be converted to lowercase. Spaces will be replaced with underscores." %}</p>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             {% endif %}
         </fieldset>
-
-        <div class="submit-row">
-            <p class="deletelink-box">
-              <a class="deletelink cancel-link" href="javascript://">{% trans "Clear Queue" %}</a>
-            </p>
-            <input class="default" type="submit" name="_save" value='{% trans "Upload" %}' />
-        </div>
-
     </form>
 </div>
 {% endblock %}

@@ -1,328 +1,451 @@
-# translation of django.po to Catalan
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
-# PATRICK KRANZLMUELLER <PATRICK@VONAUTOMATISCH.AT>, 2009.
-# Antoni Aloy <antoni.aloy@trespams.com>, 2009.
+# 
+# Translators:
+# Roger Pons <rogerpons@gmail.com>, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: django\n"
+"Project-Id-Version: django-filebrowser\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-19 21:24+0000\n"
-"PO-Revision-Date: 2009-02-15 19:00+0100\n"
-"Last-Translator: Antoni Aloy <antoni.aloy@trespams.com>\n"
-"Language-Team: Catalan <ca@li.org>\n"
+"POT-Creation-Date: 2013-11-30 18:48+0100\n"
+"PO-Revision-Date: 2017-09-23 02:45+0000\n"
+"Last-Translator: Roger Pons <rogerpons@gmail.com>\n"
+"Language-Team: Catalan (http://www.transifex.com/sehmaschine/django-filebrowser/language/ca/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
+"Language: ca\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: fields.py:27
+#: actions.py:53
 #, python-format
-msgid "Ensure this value has at most %(max)d characters (it has %(length)d)."
-msgstr ""
-"Confirma que aquest valor té com a màxim %(max)d caràcters (té longitud %"
-"(length)d)."
+msgid "Action applied successfully to '%s'"
+msgstr "Acció aplicada amb èxit a '%s'"
 
-#: fields.py:28
-#, python-format
-msgid "Ensure this value has at least %(min)d characters (it has %(length)d)."
-msgstr ""
-"Confirma que aquest valor té com a mínim %(min)d caràcters (té longitud %"
-"(length)d)."
+#: actions.py:59 forms.py:20
+msgid "Flip horizontal"
+msgstr "Voltejar a horitzontal"
 
-#: fields.py:29
+#: actions.py:66 forms.py:21
+msgid "Flip vertical"
+msgstr "Voltejar a vertical"
+
+#: actions.py:73 forms.py:22
+msgid "Rotate 90° CW"
+msgstr "Rotar 90° sentit horari"
+
+#: actions.py:80 forms.py:23
+msgid "Rotate 90° CCW"
+msgstr "Rotar 90° contrari al sentit horari"
+
+#: actions.py:87 forms.py:24
+msgid "Rotate 180°"
+msgstr "Rotar 180°"
+
+#: decorators.py:39
+msgid ""
+"Error finding Upload-Folder (site.storage.location + site.directory). Maybe "
+"it does not exist?"
+msgstr "Error cercant Carpeta de Pujades (site.storage.location + site.directory). Pot ser que no existeixi?"
+
+#: decorators.py:41
+msgid "The requested Folder does not exist."
+msgstr "La Carpeta demanada no existeix."
+
+#: decorators.py:55
+msgid "The requested File does not exist."
+msgstr "El Fitxer demanat no existeix."
+
+#: decorators.py:61
+msgid "You do not have permission to access this file!"
+msgstr "No teniu permís per accedir a aquest fitxer!"
+
+#: fields.py:63
 #, python-format
 msgid "Extension %(ext)s is not allowed. Only %(allowed)s is allowed."
-msgstr ""
-"L'extensió %(ext)s no està permesa. Sols es permeten les extensions %"
-"(allowed)s."
+msgstr "L'extensió %(ext)s no està permesa. Només %(allowed)s està permès."
 
-#: forms.py:23
+#: forms.py:57 forms.py:82
 msgid "Name"
 msgstr "Nom"
 
-#: forms.py:23 forms.py:46
-msgid ""
-"The Name will automatically be converted to lowercase. Only letters, "
-"numbers, underscores and hyphens are allowed."
-msgstr ""
-"El nom serà convertit automàticament a minúscules. Sols estan permeses le "
-"lletres, nombres, subratllats i guions."
+#: forms.py:57 forms.py:69 forms.py:82 forms.py:101
+msgid "Only letters, numbers, underscores, spaces and hyphens are allowed."
+msgstr "Només es permeten lletres, números, guions, espais i guions."
 
-#: forms.py:30 forms.py:53
-msgid "Only letters, numbers, underscores and hyphens are allowed."
-msgstr "Sols es permeten lletres, nombres, subratllats i guions."
-
-#: forms.py:33
+#: forms.py:72 forms.py:104
 msgid "The Folder already exists."
-msgstr "La carpeta ja existeix."
+msgstr "La Carpeta ja existeix."
 
-#: forms.py:46
-msgid "New Name"
-msgstr "Nou nom"
+#: forms.py:81
+msgid "Actions"
+msgstr "Accions"
 
-#: forms.py:56
-msgid "The File/Folder already exists."
-msgstr "La carpeta/arixu ja existeix"
+#: forms.py:106
+msgid "The File already exists."
+msgstr "El Fitxer ja existeix."
 
-#: forms.py:92
-msgid "File"
-msgstr "Arxiu"
+#: settings.py:110 templates/filebrowser/include/tableheader.html:21
+#: templates/filebrowser/include/tableheader.html:22
+msgid "Folder"
+msgstr "Carpeta"
 
-#: forms.py:93
-msgid "Use Image Generator"
-msgstr "Fer servir el generador d'imatges"
+#: settings.py:111
+msgid "Image"
+msgstr "Imatge"
 
-#: forms.py:102
-msgid "File already exists."
-msgstr "L'arxiu ja existeix"
+#: settings.py:112
+msgid "Video"
+msgstr "Vídeo"
 
-#: forms.py:108
-msgid "Filename is not allowed."
-msgstr "El nom d'arxiu no està permès"
+#: settings.py:113
+msgid "Document"
+msgstr "Document"
 
-#: forms.py:113
-msgid "File extension is not allowed."
-msgstr "L'extensió de l'arxiu no està permesa"
+#: settings.py:114
+msgid "Audio"
+msgstr "Audio"
 
-#: forms.py:118
-msgid "Filesize exceeds allowed Upload Size."
-msgstr "El tamany de l'arxiu supera el límit permès"
-
-#: functions.py:84
-msgid "Home"
-msgstr "Inici"
-
-#: functions.py:276
-msgid "Thumbnail creation failed."
-msgstr "Ha fallat la creació de la miniatura"
-
-#: functions.py:331 functions.py:398
-msgid "Image creation failed."
-msgstr "La creació de la imatge ha fallat"
-
-#: views.py:165
+#: sites.py:348 templates/filebrowser/include/breadcrumbs.html:9
+#: templates/filebrowser/include/breadcrumbs.html:11
 msgid "FileBrowser"
-msgstr "Visor d'arxius"
+msgstr "FileBrowser"
 
-#: views.py:188
+#: sites.py:369
 #, python-format
 msgid "The Folder %s was successfully created."
-msgstr "La carpeta %s ha estat creada amb èxit."
+msgstr "S'ha creat la Carpeta %s."
 
-#: views.py:194
+#: sites.py:374
 msgid "Permission denied."
 msgstr "Permís denegat."
 
-#: views.py:196
-msgid "Error creating directory."
-msgstr "Error creant el directori."
+#: sites.py:376
+msgid "Error creating folder."
+msgstr "Error creant la Carpeta."
 
-#: views.py:204 views.py:205 templates/filebrowser/index.html:30
+#: sites.py:383 sites.py:386 templates/filebrowser/index.html:80
 msgid "New Folder"
-msgstr "Nova carpeta"
+msgstr "Nova Carpeta"
 
-#: views.py:250
-msgid "Upload successful."
-msgstr "Pujada completada"
+#: sites.py:396
+msgid "Select files to upload"
+msgstr "Seleccioneu fitxers a pujar"
 
-#: views.py:263 templates/filebrowser/index.html:33
-#: templates/filebrowser/upload.html:62
+#: sites.py:399 templates/filebrowser/index.html:81
 msgid "Upload"
 msgstr "Pujar"
 
-#: views.py:264
-msgid "Select files to upload"
-msgstr "Selecciona arxius a pujar."
+#: sites.py:429 sites.py:432
+msgid "Confirm delete"
+msgstr "Confirmeu esborrat"
 
-#: views.py:294
-msgid "Thumbnail creation successful."
-msgstr "S'han creat les miniatures satisfactòriament."
-
-#: views.py:344
+#: sites.py:448
 #, python-format
-msgid "The file %s was successfully deleted."
-msgstr "L'arxiu %s ha estat borrat amb èxit."
+msgid "Successfully deleted %s"
+msgstr "S'ha esborrat %s"
 
-#: views.py:356
-#, python-format
-msgid "The directory %s was successfully deleted."
-msgstr "El directori %s ha estat borrat amb èxit."
-
-#: views.py:407
-msgid "Error renaming Thumbnail."
-msgstr "Error reanomenant la miniatura"
-
-#: views.py:413
+#: sites.py:485
 msgid "Renaming was successful."
-msgstr "El canvi de nom ha tingut èxit."
+msgstr "S'ha renombrat."
 
-#: views.py:418
+#: sites.py:494
 msgid "Error."
 msgstr "Error."
 
-#: views.py:427 templates/filebrowser/include/filelisting.html:52
-msgid "Rename"
-msgstr "Reanomenar"
+#: widgets.py:17 widgets.py:50
+msgid "Currently"
+msgstr "Actualment"
 
-#: views.py:428
-#, python-format
-msgid "Rename \"%s\""
-msgstr "Reanomena \"%s\""
+#: widgets.py:18 widgets.py:51
+#: templates/filebrowser/include/filelisting.html:131
+msgid "Change"
+msgstr "Modificar"
 
-#: views.py:465
-msgid "Successfully generated Images."
-msgstr "Imatges generades satisfactòriament."
+#: widgets.py:19 widgets.py:52
+msgid "Clear"
+msgstr "Netejar"
 
-#: templates/filebrowser/index.html:31
-msgid "Make Thumbs"
-msgstr "Crear miniatures"
-
-#: templates/filebrowser/index.html:32
-msgid "Generate Images"
-msgstr "Generar imatges"
-
-#: templates/filebrowser/makedir.html:24 templates/filebrowser/rename.html:22
+#: templates/filebrowser/createdir.html:23
+#: templates/filebrowser/detail.html:48
 msgid "Please correct the following errors."
-msgstr "Per favor, corregeix els següents errors"
+msgstr "Corregiu els següents errors."
 
-#: templates/filebrowser/makedir.html:34 templates/filebrowser/rename.html:33
+#: templates/filebrowser/createdir.html:36
+#: templates/filebrowser/upload.html:147
+msgid ""
+"The Name will be normalized by converting or stripping all non-standard "
+"characters."
+msgstr "El Nom serà normalitzat converting o omitint tots els caràcters que no són estàndard."
+
+#: templates/filebrowser/createdir.html:39
+#: templates/filebrowser/upload.html:150
+msgid ""
+"The Name will be converted to lowercase. Spaces will be replaced with "
+"underscores."
+msgstr "El Nom serà convertit a minúscules. Els espais seran substituïts per guions baixos."
+
+#: templates/filebrowser/createdir.html:50
 msgid "Submit"
 msgstr "Enviar"
 
-#: templates/filebrowser/upload.html:37
-msgid "Will use image generator."
-msgstr "Usaré el generador d'imatges"
+#: templates/filebrowser/custom_field.html:26
+#: templates/filebrowser/widgets/clearablefileinput.html:11
+#: templates/filebrowser/widgets/fileinput.html:11
+msgid "File not found"
+msgstr "Fitxer no trobat."
 
-#: templates/filebrowser/upload.html:47
-msgid "Help"
-msgstr "Ajuda"
-
-#: templates/filebrowser/upload.html:51
-msgid "Allowed"
-msgstr "Permès"
-
-#: templates/filebrowser/upload.html:57
-msgid "Max. Filesize"
-msgstr "Tamay màxim"
-
-#: templates/filebrowser/include/filelisting.html:8
-msgid "Select"
-msgstr "Selecciona"
-
-#: templates/filebrowser/include/filelisting.html:15
-msgid "Select File"
-msgstr "Selecciona fitxer"
-
-#: templates/filebrowser/include/filelisting.html:26
-msgid "Make Thumbnail"
-msgstr "Crear miniatura"
-
-#: templates/filebrowser/include/filelisting.html:29
-msgid "View Image"
-msgstr "Veure imatge"
-
-#: templates/filebrowser/include/filelisting.html:46
-msgid "Generate Image Versions"
-msgstr "Generar versions de la imatge"
-
-#: templates/filebrowser/include/filelisting.html:61
-msgid "Are you sure you want to delete this file?"
-msgstr ""
-
-#: templates/filebrowser/include/filelisting.html:61
-msgid "Delete File"
-msgstr "Esborrar fitxer"
-
-#: templates/filebrowser/include/filelisting.html:64
-msgid "Are you sure you want to delete this Folder?"
-msgstr ""
-
-#: templates/filebrowser/include/filelisting.html:64
-msgid "Delete Folder"
-msgstr "Esborrar carpeta"
-
-#: templates/filebrowser/include/filter.html:15
-msgid "Filter"
-msgstr "Filtrar"
-
-#: templates/filebrowser/include/filter.html:21
-msgid "By Date"
-msgstr "Per data"
-
-#: templates/filebrowser/include/filter.html:23
-msgid "Any Date"
-msgstr "Qualsevol data"
-
-#: templates/filebrowser/include/filter.html:25
-msgid "Today"
-msgstr "Avui"
-
-#: templates/filebrowser/include/filter.html:27
-msgid "Past 7 days"
-msgstr "Fa 7 dies"
-
-#: templates/filebrowser/include/filter.html:29
-msgid "Past 30 days"
-msgstr "Fa 30 dies"
-
-#: templates/filebrowser/include/filter.html:31
-msgid "This year"
-msgstr "Enguany"
-
-#: templates/filebrowser/include/filter.html:39
-msgid "By Type"
-msgstr "Per tipus"
-
-#: templates/filebrowser/include/filter.html:41
-msgid "All"
-msgstr "Tots"
-
-#: templates/filebrowser/include/paginator.html:5
-msgid "No Items Found."
-msgstr "No s'han trobat items"
-
-#: templates/filebrowser/include/paginator.html:10
+#: templates/filebrowser/delete_confirm.html:30
 #, python-format
-msgid "%(counter)s Item"
-msgid_plural "%(counter)s Items"
-msgstr[0] "%(counter)s Item"
-msgstr[1] "%(counter)s Item"
+msgid ""
+"Are you sure you want to delete \"%(escaped_object)s\"? All of the following"
+" items will be deleted:"
+msgstr "Segur que voleu esborrar \"%(escaped_object)s\"? Els següents elements seran esborrats:"
 
-#: templates/filebrowser/include/paginator.html:16
-msgid "No Items."
-msgstr "No hi ha items"
+#: templates/filebrowser/delete_confirm.html:43
+#, python-format
+msgid "... and %(escaped_object)s more Files."
+msgstr "...i %(escaped_object)s Fitxers més."
 
-#: templates/filebrowser/include/tableheader.html:13
-#: templates/filebrowser/include/tableheader.html:14
-msgid "Filename"
-msgstr "Nom de fitxer"
+#: templates/filebrowser/delete_confirm.html:50
+#: templates/filebrowser/upload.html:51
+msgid "Cancel"
+msgstr "Cancel·lar"
 
-#: templates/filebrowser/include/tableheader.html:20
-#: templates/filebrowser/include/tableheader.html:21
-msgid "Size"
-msgstr "Tamany"
+#: templates/filebrowser/delete_confirm.html:51
+msgid "Yes, I'm sure"
+msgstr "Sí, n'estic segur"
 
-#: templates/filebrowser/include/tableheader.html:23
-#: templates/filebrowser/include/tableheader.html:24
+#: templates/filebrowser/detail.html:63
+msgid "Edit"
+msgstr "Editar"
+
+#: templates/filebrowser/detail.html:78
+msgid "Folder Information"
+msgstr "Informació de Carpeta"
+
+#: templates/filebrowser/detail.html:81 templates/filebrowser/detail.html:116
+#: templates/filebrowser/include/tableheader.html:28
+#: templates/filebrowser/include/tableheader.html:29
 msgid "Date"
 msgstr "Data"
 
-#: templates/filebrowser/include/toolbar.html:14
-msgid "Go"
-msgstr "Ves"
+#: templates/filebrowser/detail.html:93
+msgid "File Information"
+msgstr "Informació de Fitxer"
+
+#: templates/filebrowser/detail.html:96
+msgid "URL"
+msgstr "URL"
+
+#: templates/filebrowser/detail.html:106
+msgid "Filesize"
+msgstr "Mida de Fitxer"
+
+#: templates/filebrowser/detail.html:127
+#: templates/filebrowser/include/tableheader.html:25
+#: templates/filebrowser/include/tableheader.html:26
+msgid "Size"
+msgstr "Mida"
+
+#: templates/filebrowser/detail.html:140
+msgid "Image Versions"
+msgstr "Versions de la Imatge"
+
+#: templates/filebrowser/detail.html:144
+#: templates/filebrowser/include/tableheader.html:15
+msgid "Thumbnail"
+msgstr "Miniatura"
+
+#: templates/filebrowser/detail.html:146
+#: templates/filebrowser/include/filelisting.html:101
+msgid "View Image"
+msgstr "Veure Imatge"
+
+#: templates/filebrowser/detail.html:170
+msgid "Delete"
+msgstr "Esborrar"
+
+#: templates/filebrowser/detail.html:171
+msgid "Save"
+msgstr "Desar"
+
+#: templates/filebrowser/detail.html:172
+msgid "Save and continue editing"
+msgstr "Desar i continuar editant"
+
+#: templates/filebrowser/upload.html:42
+msgid "Drop files here to upload"
+msgstr "Arrossegueu aquí els fitxer a pujar"
+
+#: templates/filebrowser/upload.html:43
+msgid "Upload a file"
+msgstr "Pujar un fitxer"
+
+#: templates/filebrowser/upload.html:52
+msgid "Failed"
+msgstr "Ha fallat"
+
+#: templates/filebrowser/upload.html:66
+msgid "{file} has invalid extension. Only {extensions} are allowed."
+msgstr "{file} té una extensió no vàlida. Només estan permeses {extensions}"
+
+#: templates/filebrowser/upload.html:67
+msgid "{file} is too large, maximum file size is {sizeLimit}."
+msgstr "{file} és massa llarg, la mida màxima de fitxer és {sizeLimit}."
+
+#: templates/filebrowser/upload.html:68
+msgid "{file} is too small, minimum file size is {minSizeLimit}."
+msgstr "{file} és massa petit, la mida mínima de fitxer és {minSizeLimit}."
+
+#: templates/filebrowser/upload.html:69
+msgid "{file} is empty, please select files again without it."
+msgstr "{file} està buit, torneu a seleccionar els fitxers sense aquest."
+
+#: templates/filebrowser/upload.html:70
+msgid ""
+"The files are being uploaded, if you leave now the upload will be cancelled."
+msgstr "S'estan pujant els fitxers, si abandoneu ara la pujada es cancel·larà."
+
+#: templates/filebrowser/upload.html:115
+msgid "Please enable Javascript to upload files."
+msgstr "Habiliteu Javascript per pujar fitxers."
+
+#: templates/filebrowser/upload.html:120
+msgid "Help"
+msgstr "Ajuda"
+
+#: templates/filebrowser/upload.html:123
+msgid "Allowed"
+msgstr "Permès"
+
+#: templates/filebrowser/upload.html:137
+msgid "Max. Filesize"
+msgstr "Mida màxima de fitxer"
+
+#: templates/filebrowser/upload.html:144
+#: templates/filebrowser/include/tableheader.html:17
+#: templates/filebrowser/include/tableheader.html:18
+msgid "Filename"
+msgstr "Nom de fitxer"
+
+#: templates/filebrowser/include/breadcrumbs.html:6
+msgid "Home"
+msgstr "Inici"
+
+#: templates/filebrowser/include/filelisting.html:19
+#: templates/filebrowser/include/filelisting.html:45
+#: templates/filebrowser/include/filelisting.html:70
+msgid "Select"
+msgstr "Seleccionar"
+
+#: templates/filebrowser/include/filelisting.html:23
+#: templates/filebrowser/include/filelisting.html:49
+#: templates/filebrowser/include/filelisting.html:74
+msgid "Versions"
+msgstr "Versions"
+
+#: templates/filebrowser/include/filter.html:5
+msgid "Filter"
+msgstr "Filtre"
+
+#: templates/filebrowser/include/filter.html:9
+msgid "By Date"
+msgstr "Per Data"
+
+#: templates/filebrowser/include/filter.html:11
+msgid "Any Date"
+msgstr "Qualsevol Data"
+
+#: templates/filebrowser/include/filter.html:12
+msgid "Today"
+msgstr "Avui"
+
+#: templates/filebrowser/include/filter.html:13
+msgid "Past 7 days"
+msgstr "Últims 7 dies"
+
+#: templates/filebrowser/include/filter.html:14
+msgid "This Month"
+msgstr "Aquest mes"
+
+#: templates/filebrowser/include/filter.html:15
+msgid "This year"
+msgstr "Aquest any"
+
+#: templates/filebrowser/include/filter.html:21
+msgid "By Type"
+msgstr "Per Tipus"
+
+#: templates/filebrowser/include/filter.html:23
+msgid "All"
+msgstr "Tot"
+
+#: templates/filebrowser/include/paginator.html:6
+msgid "result"
+msgstr "resultat"
+
+#: templates/filebrowser/include/paginator.html:6
+msgid "results"
+msgstr "resultats"
+
+#: templates/filebrowser/include/paginator.html:10
+#: templates/filebrowser/include/paginator.html:12
+msgid "total"
+msgstr "total"
+
+#: templates/filebrowser/include/tableheader.html:12
+#: templates/filebrowser/include/tableheader.html:13
+msgid "Type"
+msgstr "Tipus"
+
+#: templates/filebrowser/include/toolbar.html:6
+msgid "Results"
+msgstr "Resultats"
+
+#: templates/filebrowser/include/toolbar.html:8
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s resultat"
+msgstr[1] "%(counter)s resultats"
+
+#: templates/filebrowser/include/toolbar.html:9
+#, python-format
+msgid "%(full_result_count)s total"
+msgstr "%(full_result_count)s total"
 
 #: templates/filebrowser/include/toolbar.html:16
-#, python-format
-msgid "%(counter)s Item found"
-msgid_plural "%(counter)s Items found"
-msgstr[0] "%(counter)s trobat"
-msgstr[1] "%(counter)s trobats"
+msgid "Search"
+msgstr "Cercar"
 
-#: templates/filebrowser/include/toolbar.html:17
-#, python-format
-msgid "%(counter)s Item total"
-msgid_plural "%(counter)s Items total"
-msgstr[0] "total %(counter)s item"
-msgstr[1] "total %(counter)s Items"
+#~ msgid "BROWSE"
+#~ msgstr "BROWSE"
+
+#~ msgid "An Error occured"
+#~ msgstr "An Error occured"
+
+#~ msgid "Completed"
+#~ msgstr "Completed"
+
+#~ msgid "Do you want to replace the file"
+#~ msgstr "Do you want to replace the file"
+
+#~ msgid "KB"
+#~ msgstr "KB"
+
+#~ msgid "MB"
+#~ msgstr "MB"
+
+#~ msgid "Clear Queue"
+#~ msgstr "Clear Queue"
+
+#~ msgid "Flip/Rotate"
+#~ msgstr "Flip/Rotate"
+
+#~ msgid "Transposing was successful."
+#~ msgstr "Transposing was successful."
+
+#~ msgid "SELECT FILES"
+#~ msgstr "SELECT FILES"

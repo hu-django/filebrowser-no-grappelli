@@ -1,28 +1,31 @@
 {% load i18n fb_tags %}
-
-{% if results_var.results_total and not results_var.results_current %}
-<p class="paginator">
-    <strong>{% trans "No Items Found" %}</strong>
-</p>
-{% endif %}
-
-<p class="paginator">
-{% if results_var.results_total %}
-    <strong>{% blocktrans count results_var.results_total as counter %}{{ counter }} Item{% plural %}{{ counter }} Items{% endblocktrans %}</strong>&nbsp;
-    {% if page_range %}
-        {% for i in page_range %}
-            {% ifequal i "." %}
-                ...
+<nav class="grp-pagination">
+    <header style="display:none"><h1>Pagination</h1></header>
+    <ul class="grp-horizontal-list">
+        {% if filelisting.results_current %}
+            {% if query.q or query.filter_date or query.filter_type or query.type %}
+                <li class="grp-results"><span>{{ filelisting.results_current }} {% ifequal filelisting.results_current 1 %}{% trans 'result' %}{% else %}{% trans 'results' %}{% endifequal %}</span></li>
+            {% endif %}
+        {% endif %}
+        <li class="grp-results">
+            {% if query.q or filelisting.results_total != filelisting.results_current %}
+            <a href="{% query_string "" "filter_date,filter_type,p,q,type" %}" class="total">{{ filelisting.results_total }} {% trans 'total' %}</a>
             {% else %}
-                {% ifequal i page_num %}
-                    <span class="this-page">{{ i|add:"1" }}</span>
+            <span>{{ filelisting.results_total }} {% trans "total" %}</span>
+            {% endif %}
+        </li>
+        {% if page_range %}
+            {% for i in page_range %}
+                {% ifequal i "." %}
+                    <li class="grp-separator"><span>...</span></li>
                 {% else %}
-                    <a href="{% query_string '' 'p' %}&amp;p={{ i|add:"1" }}">{{ i|add:"1" }}</a>
+                    {% ifequal i page_num %}
+                        <li><span class="this-page">{{ i|add:"1" }}</span></li>
+                    {% else %}
+                        <li><a href="{% query_string "" "p" %}&amp;p={{ i|add:"1" }}">{{ i|add:"1" }}</a></li>
+                    {% endifequal %}
                 {% endifequal %}
-            {% endifequal %}
-        {% endfor %}
-    {% endif %}
-{% else %}
-    <strong>{% trans "No Items" %}</strong>
-{% endif %}
-</p>
+            {% endfor %}
+        {% endif %}
+    </ul>
+</nav>

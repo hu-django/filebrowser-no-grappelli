@@ -1,9 +1,8 @@
 # coding: utf-8
 
-# django imports
-from django.template import Node
-from django.template import Library
+from django.template import Library, Node
 from django.utils.safestring import mark_safe
+
 
 register = Library()
 
@@ -22,8 +21,9 @@ class CsrfTokenNode(Node):
             from django.conf import settings
             if settings.DEBUG:
                 import warnings
-                warnings.warn("A {% csrf_token %} was used in a template, but the context did not provide the value.  This is usually caused by not using RequestContext.")
+                warnings.warn("A {% csrf_token %} was used in a template, but the context did not provide the value. This is usually caused by not using RequestContext.")
             return u''
+
 
 def fb_csrf_token(parser, token):
     return CsrfTokenNode()
