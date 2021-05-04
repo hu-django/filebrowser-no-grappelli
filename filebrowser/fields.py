@@ -80,9 +80,7 @@ class FileBrowseFormField(forms.CharField):
         return value
 
 
-class FileBrowseField(Field):
-    __metaclass__ = SubfieldBase
-    
+class FileBrowseField(Field, metaclass=SubfieldBase):
     def __init__(self, *args, **kwargs):
         self.directory = kwargs.pop('directory', '')
         self.extensions = kwargs.pop('extensions', '')
