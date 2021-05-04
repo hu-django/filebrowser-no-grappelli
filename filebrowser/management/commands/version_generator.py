@@ -1,10 +1,10 @@
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
+import os, re
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "(Re)Generate versions of Images"
 
-    def handle_noargs(self, **options):
-        import os, re
+    def handle(self, *args, **options):
         from filebrowser.settings import EXTENSION_LIST, EXCLUDE, VERSIONS, EXTENSIONS
         from filebrowser.conf import fb_settings
         
@@ -12,7 +12,7 @@ class Command(NoArgsCommand):
         filter_re = []
         for exp in EXCLUDE:
            filter_re.append(re.compile(exp))
-        for k,v in VERSIONS.iteritems():
+        for k,v in VERSIONS.items():
             exp = (r'_%s.(%s)') % (k, '|'.join(EXTENSION_LIST))
             filter_re.append(re.compile(exp))
             
@@ -37,7 +37,7 @@ class Command(NoArgsCommand):
                     self.createVersions(os.path.join(dirpath, filename))
     
     def createVersions(self, path):
-        print "generating versions for: ", path
+        print ("generating versions for: ", path)
         from filebrowser.settings import VERSIONS
         from filebrowser.functions import version_generator
         for version in VERSIONS:

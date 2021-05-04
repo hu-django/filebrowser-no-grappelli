@@ -3,3 +3,5 @@
 build
 dist
 *.egg-info
+/filebrowsertest/media/
+/filebrowsertest/db.sqlite3
