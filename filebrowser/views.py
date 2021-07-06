@@ -20,6 +20,12 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.utils.encoding import smart_str
 
 try:
+    from django.forms import utils as form_utils
+except ImportError as e:
+    # django 1.9
+    from django.forms import util as form_utils
+
+try:
     # django SVN
     from django.views.decorators.csrf import csrf_exempt
 except:
@@ -208,9 +214,9 @@ def mkdir(request):
             except OSError as e:
                 (errno, strerror) = (e.errno, e.strerror)
                 if errno == 13:
-                    form.errors['dir_name'] = forms.util.ErrorList([_('Permission denied.')])
+                    form.errors['dir_name'] = forms.utils.ErrorList([_('Permission denied.')])
                 else:
-                    form.errors['dir_name'] = forms.util.ErrorList([_('Error creating folder.')])
+                    form.errors['dir_name'] = forms.utils.ErrorList([_('Error creating folder.')])
     else:
         form = MakeDirForm(abs_path)
     
