@@ -320,7 +320,7 @@ def _upload_file(request):
             # if file already exists
             if os.path.isfile(smart_str(os.path.join(fb_settings.MEDIA_ROOT, fb_settings.DIRECTORY, folder, filedata.name))):
                 old_file = smart_str(os.path.join(abs_path, filedata.name))
-                new_file = smart_str(os.path.join(abs_path, uploadedfile))
+                new_file = smart_str(os.path.join(fb_settings.MEDIA_ROOT, uploadedfile))
                 file_move_safe(new_file, old_file)
             # POST UPLOAD SIGNAL
             filebrowser_post_upload.send(sender=request, path=request.POST.get('folder'), file=FileObject(smart_str(os.path.join(fb_settings.DIRECTORY, folder, filedata.name))))
