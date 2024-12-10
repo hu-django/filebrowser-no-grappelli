@@ -2,7 +2,10 @@
 
 # django imports
 from django import template
-from django.utils.http import urlquote
+try:
+    from django.utils.http import urlquote
+except ImportError:
+    from urllib.parse import quote as urlquote
 
 # filebrowser imports
 from filebrowser.settings import SELECT_FORMATS

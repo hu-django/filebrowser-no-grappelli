@@ -9,7 +9,11 @@ from django.forms.widgets import Input
 from django.db.models.fields import Field
 from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
-from django.utils.translation import ugettext_lazy as _
+try:
+    from django.utils.translation import gettext_lazy as _
+except ImportError:
+    from django.utils.translation import ugettext_lazy as _ # Django 3 fallback
+
 
 # filebrowser imports
 from filebrowser.settings import *
