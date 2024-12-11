@@ -15,8 +15,8 @@ from filebrowser import urls
 admin.autodiscover()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('admin/filebrowser/', include(urls.urlpatterns)),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG or settings.ENABLE_MEDIA:

@@ -15,6 +15,9 @@ Get/set a dir, in which filebrowsers, which will be rendered in current request/
 
 ##Changelist
 
+###v3.3.1
+- compatibility with Django 4
+
 ###v3.2.5
 - compatibility with a CVE-2022-23833 django fix
 
