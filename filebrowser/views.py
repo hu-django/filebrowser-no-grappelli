@@ -11,7 +11,11 @@ from django.http import HttpResponseRedirect, Http404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
-from django.utils.translation import ugettext as _
+try:
+    from django.utils.translation import gettext as _
+except ImportError:
+    from django.utils.translation import ugettext as _ # Django 3 fallback
+
 from django.conf import settings
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
@@ -171,8 +175,8 @@ browse = staff_member_required(never_cache(browse))
 
 
 # mkdir signals
-filebrowser_pre_createdir = Signal(providing_args=["path", "dirname"])
-filebrowser_post_createdir = Signal(providing_args=["path", "dirname"])
+filebrowser_pre_createdir = Signal()
+filebrowser_post_createdir = Signal()
 
 def mkdir(request):
     """
@@ -290,8 +294,8 @@ def _check_file(request):
 
 
 # upload signals
-filebrowser_pre_upload = Signal(providing_args=["path", "file"])
-filebrowser_post_upload = Signal(providing_args=["path", "file"])
+filebrowser_pre_upload = Signal()
+filebrowser_post_upload = Signal()
 
 
 @csrf_exempt
@@ -328,8 +332,8 @@ def _upload_file(request):
 
 
 # delete signals
-filebrowser_pre_delete = Signal(providing_args=["path", "filename"])
-filebrowser_post_delete = Signal(providing_args=["path", "filename"])
+filebrowser_pre_delete = Signal()
+filebrowser_post_delete = Signal()
 
 def delete(request):
     """
@@ -404,8 +408,8 @@ delete = staff_member_required(never_cache(delete))
 
 
 # rename signals
-filebrowser_pre_rename = Signal(providing_args=["path", "filename", "new_filename"])
-filebrowser_post_rename = Signal(providing_args=["path", "filename", "new_filename"])
+filebrowser_pre_rename = Signal()
+filebrowser_post_rename = Signal()
 
 def rename(request):
     """

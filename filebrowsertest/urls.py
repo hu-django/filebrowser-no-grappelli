@@ -1,5 +1,10 @@
 from django.conf import settings
-from django.conf.urls import url, include
+try:
+    from django.urls import re_path as url, path
+except ImportError:
+    from django.conf.urls import url
+
+from django.conf.urls import include
 
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -10,8 +15,8 @@ from filebrowser import urls
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^admin/filebrowser/', include(urls)),
+    path('admin/filebrowser/', include(urls.urlpatterns)),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG or settings.ENABLE_MEDIA:
