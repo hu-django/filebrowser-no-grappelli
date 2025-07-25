@@ -15,6 +15,9 @@ Get/set a dir, in which filebrowsers, which will be rendered in current request/
 
 ##Changelist
 
+###v3.3.2
+- compatibility with Django 4 (deprecated template tags ifequal ifnotequal)
+
 ###v3.3.1
 - compatibility with Django 4
 

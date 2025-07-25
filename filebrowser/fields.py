@@ -124,6 +124,6 @@ class FileBrowseField(Field, metaclass=SubfieldBase):
 
 try:
     from south.modelsinspector import add_introspection_rules
-    add_introspection_rules([], ["^filebrowser\.fields\.FileBrowseField"])
+    add_introspection_rules([], [r"^filebrowser\.fields\.FileBrowseField"])
 except:
     pass

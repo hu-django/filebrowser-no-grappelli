@@ -34,8 +34,8 @@
                 'auto'              : false,
                 'folder'            : '{{ query.dir }}',
                 'multi'             : true,
-                'fileDesc'          : '{% for extension in settings_var.EXTENSIONS.items %}{% ifnotequal extension.0 'Folder' %}{% for item in extension.1 %}*{{ item|safe }};{% endfor %}{% endifnotequal %}{% endfor %}',
-                'fileExt'           : '{% for extension in settings_var.EXTENSIONS.items %}{% ifnotequal extension.0 'Folder' %}{% for item in extension.1 %}*{{ item|safe }};{% endfor %}{% endifnotequal %}{% endfor %}',
+                'fileDesc'          : '{% for extension in settings_var.EXTENSIONS.items %}{% if extension.0 != 'Folder' %}{% for item in extension.1 %}*{{ item|safe }};{% endfor %}{% endif %}{% endfor %}',
+                'fileExt'           : '{% for extension in settings_var.EXTENSIONS.items %}{% if extension.0 != 'Folder' %}{% for item in extension.1 %}*{{ item|safe }};{% endfor %}{% endif %}{% endfor %}',
                 'sizeLimit'         : {{ settings_var.MAX_UPLOAD_SIZE }},
                 'scriptAccess'      : 'sameDomain',
                 'queueSizeLimit'    : 50,
@@ -87,10 +87,10 @@
             <h2>{% trans "Help" %}</h2>
             <div class="form-row">
                 {% for extension in settings_var.EXTENSIONS.items %}
-                    {% ifnotequal extension.0 'Folder' %}
+                    {% if extension.0 != 'Folder' %}
                         <div class="column span-4"><label class="required">{% if forloop.first %}{% trans "Allowed" %}:{% else %}&nbsp;{% endif %}</label></div>
                         <div class="column span-12 last"><p>{{ extension.0|safe }} ({{ extension.1|join:", "|safe }})</p></div><br clear="all" />
-                    {% endifnotequal %}
+                    {% endif %}
                 {% endfor %}
             </div>
             <div class="form-row">

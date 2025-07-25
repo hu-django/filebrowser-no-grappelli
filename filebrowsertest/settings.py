@@ -97,7 +97,7 @@ USE_TZ = True
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = "media"
+MEDIA_ROOT = "filebrowsertest/media"
 
 STATIC_URL = '/static/'
 
