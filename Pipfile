@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 setuptools = "*"
 pip = "*"
-django = "<5"
+django = ">=3.2,<6.0"
 pillow = "<10"
 
 [dev-packages]
