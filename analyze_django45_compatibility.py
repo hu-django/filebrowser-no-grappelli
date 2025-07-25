@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Manual Django 4/5 compatibility analysis without installing packages.
+Manual Django 3/4/5 compatibility analysis without installing packages.
 """
 
 import os
@@ -8,7 +8,7 @@ import re
 import sys
 
 def analyze_file_for_compatibility_issues(filepath):
-    """Analyze a Python file for Django 4/5 compatibility issues."""
+    """Analyze a Python file for Django 3/4/5 compatibility issues."""
     issues = []
     
     try:
