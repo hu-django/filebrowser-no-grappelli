@@ -5,7 +5,7 @@ import os, re
 from time import gmtime, strftime
 
 # django imports
-from django.shortcuts import render as render_to_response, HttpResponse
+from django.shortcuts import render, HttpResponse
 from django.template import RequestContext as Context
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.admin.views.decorators import staff_member_required
@@ -159,7 +159,7 @@ def browse(request):
     except (EmptyPage, InvalidPage):
         page = p.page(p.num_pages)
     
-    return render_to_response(request, template_name='filebrowser/index.html', context={
+    return render(request, template_name='filebrowser/index.html', context={
         'dir': path,
         'p': p,
         'page': page,
@@ -224,7 +224,7 @@ def mkdir(request):
     else:
         form = MakeDirForm(abs_path)
     
-    return render_to_response(request, 'filebrowser/makedir.html', {
+    return render(request, 'filebrowser/makedir.html', {
         'form': form,
         'query': query,
         'title': _(u'New Folder'),
@@ -256,7 +256,7 @@ def upload(request):
     # SESSION (used for flash-uploading)
     session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
     
-    return render_to_response(request, 'filebrowser/upload.html', {
+    return render(request, 'filebrowser/upload.html', {
         'upload_path': path,
         'query': query,
         'title': _(u'Select files to upload'),
@@ -464,7 +464,7 @@ def rename(request):
     else:
         form = RenameForm(abs_path, file_extension)
     
-    return render_to_response(request, 'filebrowser/rename.html', {
+    return render(request, 'filebrowser/rename.html', {
         'form': form,
         'query': query,
         'file_extension': file_extension,
@@ -494,7 +494,7 @@ def versions(request):
         return HttpResponseRedirect(reverse("fb_browse"))
     abs_path = _check_access(request, path)
     
-    return render_to_response(request, 'filebrowser/versions.html', {
+    return render(request, 'filebrowser/versions.html', {
         'original': path_to_url(os.path.join(fb_settings.DIRECTORY, path, filename)),
         'query': query,
         'title': _(u'Versions for "%s"') % filename,

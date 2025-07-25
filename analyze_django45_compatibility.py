@@ -59,7 +59,15 @@ def analyze_file_for_compatibility_issues(filepath):
             for check_name, check_info in patterns.items():
                 if re.search(check_info['pattern'], line):
                     # Check if this is part of a try/except compatibility block
-                    if 'try:' in lines[max(0, line_num-3):line_num] or 'except ImportError' in lines[line_num:line_num+3]:
+                    context_start = max(0, line_num-5)
+                    context_end = min(len(lines), line_num+3)
+                    context_lines = lines[context_start:context_end]
+                    
+                    # Look for try/except patterns in the surrounding context
+                    has_try_except = any('try:' in l or 'except ImportError' in l for l in context_lines)
+                    is_fallback_line = 'except ImportError' in line or '# Django 3 fallback' in line
+                    
+                    if has_try_except or is_fallback_line:
                         # This is likely a compatibility shim, which is good
                         continue
                     
