@@ -304,31 +304,88 @@ def _upload_file(request):
     """
     Upload file to the server.
     """
+    try:
+        import json
+    except ImportError:
+        from django.utils import simplejson as json
     
-    from django.core.files.move import file_move_safe
-    
-    if request.method == 'POST':
-        folder = request.POST.get('folder')
-        fb_uploadurl_re = re.compile(r'^.*(%s)' % reverse("fb_upload"))
-        folder = fb_uploadurl_re.sub('', folder)
-        abs_path = _check_access(request, folder)
-        if request.FILES:
-            filedata = request.FILES['Filedata']
-            filedata.name = convert_filename(filedata.name)
-            _check_access(request, abs_path, filedata.name)
-            # PRE UPLOAD SIGNAL
-            filebrowser_pre_upload.send(sender=request, path=request.POST.get('folder'), file=filedata)
-            # HANDLE UPLOAD
-            uploadedfile = handle_file_upload(abs_path, filedata)
-            # MOVE UPLOADED FILE
-            # if file already exists
-            if os.path.isfile(smart_str(os.path.join(fb_settings.MEDIA_ROOT, fb_settings.DIRECTORY, folder, filedata.name))):
-                old_file = smart_str(os.path.join(abs_path, filedata.name))
-                new_file = smart_str(os.path.join(fb_settings.MEDIA_ROOT, uploadedfile))
-                file_move_safe(new_file, old_file)
-            # POST UPLOAD SIGNAL
-            filebrowser_post_upload.send(sender=request, path=request.POST.get('folder'), file=FileObject(smart_str(os.path.join(fb_settings.DIRECTORY, folder, filedata.name))))
-    return HttpResponse('True')
+    try:
+        if request.method == 'POST':
+            folder = request.POST.get('folder')
+            fb_uploadurl_re = re.compile(r'^.*(%s)' % reverse("fb_upload"))
+            folder = fb_uploadurl_re.sub('', folder)
+            abs_path = _check_access(request, folder)
+            
+            # Check for override parameter
+            override = request.POST.get('override', '').lower() in ('true', '1', 'yes', 'on')
+            
+            if request.FILES:
+                filedata = request.FILES['Filedata']
+                filedata.name = convert_filename(filedata.name)
+                # Validate file path access and get absolute path
+                target_file_path = smart_str(_check_access(request, folder, filedata.name))
+                file_exists = os.path.isfile(target_file_path)
+                
+                # If file exists and override is not set, return error
+                if file_exists and not override:
+                    error_response = json.dumps({
+                        "error": "FILE_EXISTS",
+                        "filename": filedata.name,
+                        "message": _("File '%s' already exists. Use override option to replace it.") % filedata.name
+                    })
+                    return HttpResponse(error_response, content_type="application/json", status=400)
+                
+                # PRE UPLOAD SIGNAL
+                filebrowser_pre_upload.send(sender=request, path=request.POST.get('folder'), file=filedata)
+                
+                # HANDLE UPLOAD
+                # handle_file_upload expects a relative path, not absolute
+                # Construct relative path from MEDIA_ROOT
+                relative_upload_path = os.path.relpath(abs_path, fb_settings.MEDIA_ROOT)
+                if relative_upload_path == '.':
+                    relative_upload_path = ''
+                uploadedfile = handle_file_upload(relative_upload_path, filedata)
+                
+                # MOVE UPLOADED FILE
+                # if file already exists, replace it
+                if file_exists:
+                    old_file = target_file_path
+                    new_file = smart_str(os.path.join(fb_settings.MEDIA_ROOT, uploadedfile))
+                    try:
+                        # Use os.replace for atomic file replacement (Python 3.3+)
+                        os.replace(new_file, old_file)
+                    except AttributeError:
+                        # Fallback for older Python versions
+                        if os.path.exists(old_file):
+                            os.remove(old_file)
+                        os.rename(new_file, old_file)
+                
+                # POST UPLOAD SIGNAL
+                filebrowser_post_upload.send(sender=request, path=request.POST.get('folder'), file=FileObject(smart_str(os.path.join(fb_settings.DIRECTORY, folder, filedata.name))))
+                
+                # Return JSON success response
+                success_response = json.dumps({
+                    "success": True,
+                    "filename": filedata.name
+                })
+                return HttpResponse(success_response, content_type="application/json")
+        
+        # Return JSON success for backward compatibility (no file uploaded)
+        return HttpResponse(json.dumps({"success": True}), content_type="application/json")
+    except Http404 as e:
+        # Handle path access errors
+        error_response = json.dumps({
+            "error": "ACCESS_DENIED",
+            "message": str(e) if str(e) else "Access denied to this path"
+        })
+        return HttpResponse(error_response, content_type="application/json", status=403)
+    except Exception as e:
+        # Handle any other errors and return JSON
+        error_response = json.dumps({
+            "error": "UPLOAD_ERROR",
+            "message": str(e)
+        })
+        return HttpResponse(error_response, content_type="application/json", status=500)
 
 
 # delete signals

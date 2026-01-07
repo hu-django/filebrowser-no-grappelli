@@ -19,7 +19,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
-if settings.DEBUG or settings.ENABLE_MEDIA:
+if settings.DEBUG or getattr(settings, 'ENABLE_MEDIA', False):
     urlpatterns += [
         url(r'^%s(?P<path>.*)$' % getattr(settings, 'MEDIA_URL', '/')[1:], serve,
             {'document_root': getattr(settings, 'MEDIA_ROOT', '/dev/null'),  'show_indexes': True}),

@@ -19,5 +19,9 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Framework :: Django',
+    ],
+    install_requires=[
+        'Django>=3.2,<6.0',
+        'Pillow<10'
     ]
 )
