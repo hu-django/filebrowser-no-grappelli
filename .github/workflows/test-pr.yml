@@ -18,7 +18,21 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
+        python-version: '3.12'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libjpeg-dev \
+          zlib1g-dev \
+          libtiff-dev \
+          libfreetype6-dev \
+          liblcms2-dev \
+          libwebp-dev \
+          libharfbuzz-dev \
+          libfribidi-dev \
+          libxcb1-dev
 
     - name: Install dependencies
       run: |

@@ -1,5 +1,6 @@
 
 from filebrowser import settings
+from django.conf import settings as django_settings
 
 class FileBrowserSettings(object):
     """
@@ -13,6 +14,13 @@ class FileBrowserSettings(object):
     >>> fb_settings.MEDIA_ROOT # etc..
     """
     def __getattr__(self, name):
-        return getattr(settings, name)
+        # For MEDIA_ROOT and DIRECTORY, access Django settings dynamically
+        # to support test overrides
+        if name == 'MEDIA_ROOT':
+            return getattr(django_settings, "FILEBROWSER_MEDIA_ROOT", django_settings.MEDIA_ROOT)
+        elif name == 'DIRECTORY':
+            return getattr(django_settings, "FILEBROWSER_DIRECTORY", getattr(settings, 'DIRECTORY', 'uploads/'))
+        else:
+            return getattr(settings, name)
 
 fb_settings = FileBrowserSettings()

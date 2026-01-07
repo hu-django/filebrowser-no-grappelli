@@ -53,12 +53,12 @@ class UploadEndpointsTest(TestCase):
             FILEBROWSER_DIRECTORY=''
         ):
             response = self.client.post(reverse('fb_check'), {
-                'folder': '/filebrowser/',
+                'folder': '',
                 'testfile': 'nonexistent.txt'
             })
             
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
+            self.assertEqual(response['Content-Type'], 'application/json')
             
             # Parse JSON response
             response_data = json.loads(response.content.decode())
@@ -78,11 +78,12 @@ class UploadEndpointsTest(TestCase):
                 f.write('existing file content')
             
             response = self.client.post(reverse('fb_check'), {
-                'folder': '/filebrowser/',
+                'folder': '',
                 'testfile': 'existing.txt'
             })
             
             self.assertEqual(response.status_code, 200)
+            self.assertEqual(response['Content-Type'], 'application/json')
             
             # Parse JSON response - should return the existing file name
             response_data = json.loads(response.content.decode())
@@ -104,7 +105,7 @@ class UploadEndpointsTest(TestCase):
             )
             
             response = self.client.post(reverse('fb_do_upload'), {
-                'folder': '/filebrowser/',
+                'folder': '',
                 'Filedata': uploaded_file
             })
             
@@ -831,7 +832,7 @@ class FileOverrideTest(TestCase):
             )
             
             response = self.client.post(reverse('fb_do_upload'), {
-                'folder': '/filebrowser/',
+                'folder': '',
                 'Filedata': uploaded_file
             })
             
@@ -1277,7 +1278,7 @@ class UploadFilenameSanitizationTest(TestCase):
             )
             
             response = self.client.post(reverse('fb_do_upload'), {
-                'folder': '/filebrowser/',
+                'folder': '',
                 'Filedata': uploaded_file
             })
             
@@ -1306,7 +1307,7 @@ class UploadFilenameSanitizationTest(TestCase):
             )
             
             response = self.client.post(reverse('fb_do_upload'), {
-                'folder': '/filebrowser/',
+                'folder': '',
                 'Filedata': uploaded_file
             })
             
