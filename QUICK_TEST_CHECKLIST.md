@@ -14,7 +14,7 @@
 
 ### File Exists - Without Override
 - [ ] Upload existing file (override unchecked)
-- [ ] Modal appears: "File 'X' already exists. Do you want to override it?"
+- [ ] Modal appears: "File 'X' already exists. Do you want to override it?
 - [ ] Click "Cancel" → File removed from queue, original file unchanged
 - [ ] Click "Override" → Checkbox auto-checks, upload retries, file replaced
 

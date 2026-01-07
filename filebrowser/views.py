@@ -278,19 +278,37 @@ def _check_file(request):
     except ImportError:
         import json as simplejson
     
-    folder = request.POST.get('folder')
-    fb_uploadurl_re = re.compile(r'^.*(%s)' % reverse("fb_upload"))
-    folder = fb_uploadurl_re.sub('', folder)
+    folder = request.POST.get('folder', '')
+    # Process folder path - remove upload URL pattern if present
+    try:
+        fb_uploadurl_re = re.compile(r'^.*(%s)' % reverse("fb_upload"))
+        folder = fb_uploadurl_re.sub('', folder)
+    except:
+        # If reverse fails (e.g., in tests), just use folder as-is
+        pass
+    
+    # Normalize folder - remove leading/trailing slashes
+    folder = folder.strip('/')
     
     fileArray = {}
     if request.method == 'POST':
         for k,v in request.POST.items():
             if k != "folder":
                 v = convert_filename(v)
-                if os.path.isfile(smart_str(_check_access(request, folder, v))):
-                    fileArray[k] = v
+                try:
+                    # Handle empty folder case
+                    if folder:
+                        path_parts = [folder, v]
+                    else:
+                        path_parts = [v]
+                    file_path = smart_str(_check_access(request, *path_parts))
+                    if os.path.isfile(file_path):
+                        fileArray[k] = v
+                except (Http404, Exception):
+                    # File doesn't exist or path access denied
+                    pass
     
-    return HttpResponse(simplejson.dumps(fileArray))
+    return HttpResponse(simplejson.dumps(fileArray), content_type="application/json")
 
 
 # upload signals
@@ -323,8 +341,24 @@ def _upload_file(request):
                 filedata = request.FILES['Filedata']
                 filedata.name = convert_filename(filedata.name)
                 # Validate file path access and get absolute path
-                target_file_path = smart_str(_check_access(request, folder, filedata.name))
-                file_exists = os.path.isfile(target_file_path)
+                # _check_access handles path joining, but we need to filter empty strings
+                # When folder is empty string, we still need to pass it or handle it specially
+                if folder:
+                    path_parts = [folder, filedata.name]
+                else:
+                    # Empty folder means file is in root directory
+                    path_parts = [filedata.name]
+                try:
+                    target_file_path = smart_str(_check_access(request, *path_parts))
+                    file_exists = os.path.isfile(target_file_path)
+                except Http404:
+                    # Path access denied, treat as file doesn't exist for override check
+                    target_file_path = None
+                    file_exists = False
+                except Exception as e:
+                    # Catch any other exception during path check
+                    target_file_path = None
+                    file_exists = False
                 
                 # If file exists and override is not set, return error
                 if file_exists and not override:

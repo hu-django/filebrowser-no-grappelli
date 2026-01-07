@@ -77,6 +77,28 @@
                         $data.settings.formData.override = $overrideCheckbox.is(':checked') ? 'true' : 'false';
                     }
                 },
+                'onQueue'           : function(file) {
+                    console.log('File added to queue:', file.name);
+                    // Update override value when file is added to queue
+                    var $data = $fileInput.data('uploadifive');
+                    if ($data && $data.settings) {
+                        $data.settings.formData.override = $overrideCheckbox.is(':checked') ? 'true' : 'false';
+                    }
+                },
+                'onCancel'          : function(file) {
+                    console.log('File canceled:', file ? file.name : 'unknown');
+                    var $data = $fileInput.data('uploadifive');
+                    if ($data && $data.queue) {
+                        console.log('Queue count after onCancel:', $data.queue.count);
+                    }
+                },
+                'onClearQueue'       : function() {
+                    console.log('Queue cleared');
+                    var $data = $fileInput.data('uploadifive');
+                    if ($data && $data.queue) {
+                        console.log('Queue count after clear:', $data.queue.count);
+                    }
+                },
                 'cancelImg'         : '{{ settings_var.URL_FILEBROWSER_MEDIA }}uploadify/cancel.png',
                 'auto'              : false,
                 'folder'            : '{{ query.dir }}',
@@ -96,14 +118,32 @@
                     if (exists && !$overrideCheckbox.is(':checked')) {
                         showFileExistsModal(file.name, function(override) {
                             if (override) {
-                                // Retry the check/upload with override enabled
+                                // Enable override checkbox and update formData
+                                $overrideCheckbox.prop('checked', true);
                                 var $data = $fileInput.data('uploadifive');
+                                if ($data && $data.settings) {
+                                    $data.settings.formData.override = 'true';
+                                }
+                                // Retry the check/upload with override enabled
                                 if ($data && $data.checkExists) {
                                     $data.checkExists(file);
                                 }
                             } else {
-                                // Cancel the file
-                                $fileInput.uploadifive('cancel', file);
+                                // Cancel the file and remove from queue
+                                console.log('Canceling file from onCheck:', file.name);
+                                var $data = $fileInput.data('uploadifive');
+                                // Try to remove from queue using UploadiFive's internal methods
+                                if ($data && $data.removeQueueItem) {
+                                    $data.removeQueueItem(file);
+                                } else {
+                                    // Fallback to cancel
+                                    $fileInput.uploadifive('cancel', file);
+                                }
+                                // Also remove the queue item from DOM
+                                if (file.queueItem) {
+                                    file.queueItem.remove();
+                                }
+                                console.log('Queue count after cancel:', $data && $data.queue ? $data.queue.count : 'unknown');
                             }
                         });
                         return true; // Skip default behavior
@@ -126,6 +166,11 @@
                                     if (override) {
                                         // Retry upload with override enabled
                                         $overrideCheckbox.prop('checked', true);
+                                        // Update formData immediately
+                                        var $data = $fileInput.data('uploadifive');
+                                        if ($data && $data.settings) {
+                                            $data.settings.formData.override = 'true';
+                                        }
                                         // Reset file state and retry
                                         file.skip = false;
                                         file.complete = false;
@@ -136,17 +181,34 @@
                                         }
                                         $fileInput.uploadifive('upload', file);
                                     } else {
-                                        // Mark as error
-                                        if (file.queueItem) {
-                                            file.queueItem.addClass('error');
-                                            file.queueItem.find('.fileinfo').html(' - {% trans "Error: File exists" %}');
+                                        // Cancel the file and remove from queue
+                                        console.log('Canceling file from onError:', file.name);
+                                        var $data = $fileInput.data('uploadifive');
+                                        // Try to remove from queue using UploadiFive's internal methods
+                                        if ($data && $data.removeQueueItem) {
+                                            $data.removeQueueItem(file);
+                                        } else {
+                                            // Fallback to cancel
+                                            $fileInput.uploadifive('cancel', file);
                                         }
+                                        // Also remove the queue item from DOM
+                                        if (file.queueItem) {
+                                            file.queueItem.remove();
+                                        }
+                                        // Clear the file input associated with this file to prevent re-adding
+                                        if (file.input && file.input.length > 0) {
+                                            file.input.val('');
+                                        } else if ($data && $data.currentInput) {
+                                            $data.currentInput.val('');
+                                        }
+                                        console.log('Queue count after cancel:', $data && $data.queue ? $data.queue.count : 'unknown');
                                     }
                                 });
                                 return; // Don't call default error handler
                             }
                         } catch(e) {
                             // Not JSON, continue with default error handling
+                            console.error('Error parsing FILE_EXISTS error response:', e, file.xhr ? file.xhr.responseText : 'No response text');
                         }
                     }
                     
@@ -160,6 +222,11 @@
                                 showFileExistsModal(filename, function(override) {
                                     if (override) {
                                         $overrideCheckbox.prop('checked', true);
+                                        // Update formData immediately
+                                        var $data = $fileInput.data('uploadifive');
+                                        if ($data && $data.settings) {
+                                            $data.settings.formData.override = 'true';
+                                        }
                                         file.skip = false;
                                         file.complete = false;
                                         file.uploading = false;
@@ -169,16 +236,34 @@
                                         }
                                         $fileInput.uploadifive('upload', file);
                                     } else {
-                                        if (file.queueItem) {
-                                            file.queueItem.addClass('error');
-                                            file.queueItem.find('.fileinfo').html(' - {% trans "Error: File exists" %}');
+                                        // Cancel the file and remove from queue
+                                        console.log('Canceling file from onError:', file.name);
+                                        var $data = $fileInput.data('uploadifive');
+                                        // Try to remove from queue using UploadiFive's internal methods
+                                        if ($data && $data.removeQueueItem) {
+                                            $data.removeQueueItem(file);
+                                        } else {
+                                            // Fallback to cancel
+                                            $fileInput.uploadifive('cancel', file);
                                         }
+                                        // Also remove the queue item from DOM
+                                        if (file.queueItem) {
+                                            file.queueItem.remove();
+                                        }
+                                        // Clear the file input associated with this file to prevent re-adding
+                                        if (file.input && file.input.length > 0) {
+                                            file.input.val('');
+                                        } else if ($data && $data.currentInput) {
+                                            $data.currentInput.val('');
+                                        }
+                                        console.log('Queue count after cancel:', $data && $data.queue ? $data.queue.count : 'unknown');
                                     }
                                 });
                                 return;
                             }
                         } catch(e) {
                             // Not our error, continue
+                            console.error('Error parsing 400 error response:', e, file.xhr ? file.xhr.responseText : 'No response text');
                         }
                     }
                     
@@ -201,6 +286,11 @@
                             showFileExistsModal(response.filename || file.name, function(override) {
                                 if (override) {
                                     $overrideCheckbox.prop('checked', true);
+                                    // Update formData immediately
+                                    var $data = $fileInput.data('uploadifive');
+                                    if ($data && $data.settings) {
+                                        $data.settings.formData.override = 'true';
+                                    }
                                     file.skip = false;
                                     file.complete = false;
                                     file.uploading = false;
@@ -216,6 +306,7 @@
                     } catch(e) {
                         // Not JSON or parse error, continue with default behavior
                         // This maintains backward compatibility with 'True' responses
+                        console.error('Error parsing upload complete response:', e, 'Response data:', data);
                     }
                 },
                 'onAllComplete'     : function(){var newpath='../browse/{% query_string %}';window.location=newpath;},
@@ -229,12 +320,69 @@
                 }
             });
             
+            // Update formData whenever override checkbox changes
+            $overrideCheckbox.on('change', function() {
+                var $data = $fileInput.data('uploadifive');
+                if ($data && $data.settings) {
+                    $data.settings.formData.override = $(this).is(':checked') ? 'true' : 'false';
+                }
+            });
+            
             $('input:submit').click(function(evt){
-                $('#id_file').uploadifive('upload');
+                evt.preventDefault();
+                evt.stopPropagation();
+                console.log('Upload button clicked');
+                // Ensure formData is up to date before upload
+                var $data = $fileInput.data('uploadifive');
+                console.log('UploadiFive data:', $data);
+                if (!$data) {
+                    // UploadiFive not initialized, try to initialize it
+                    console.error('UploadiFive not initialized - cannot upload');
+                    alert('UploadiFive not initialized. Please refresh the page.');
+                    return false;
+                }
+                if ($data.settings) {
+                    $data.settings.formData.override = $overrideCheckbox.is(':checked') ? 'true' : 'false';
+                    console.log('formData.override set to:', $data.settings.formData.override);
+                }
+                // UploadiFive uses queue.count for number of files, not queue.length
+                var queueCount = $data.queue ? $data.queue.count : 0;
+                console.log('Queue count (files in queue):', queueCount);
+                console.log('Queue stats:', $data.queue);
+                
+                // Check all possible file storage locations
+                console.log('Files array:', $data.files);
+                console.log('FileList:', $data.fileList);
+                console.log('All $data properties:', Object.keys($data));
+                
+                // Check if there are files to upload
+                var hasFiles = queueCount > 0;
+                console.log('Has files to upload:', hasFiles);
+                
+                if (!hasFiles) {
+                    console.warn('No files in queue! User needs to select files first.');
+                }
+                // Always try to upload - UploadiFive will handle empty queue gracefully
+                try {
+                    console.log('Calling uploadifive upload...');
+                    $fileInput.uploadifive('upload');
+                    console.log('uploadifive upload called successfully');
+                } catch(e) {
+                    console.error('Error calling uploadifive upload:', e);
+                    console.error('Error stack:', e.stack);
+                    alert('Error starting upload: ' + e.message);
+                }
                 return false;
             });
             $('a.cancel-link').click(function(evt){
-                $('#id_file').uploadifive('clearQueue');
+                evt.preventDefault();
+                console.log('Clear queue clicked');
+                try {
+                    $('#id_file').uploadifive('clearQueue');
+                    console.log('Queue cleared successfully');
+                } catch(e) {
+                    console.error('Error clearing queue:', e);
+                }
                 return false;
             });
         });
@@ -266,6 +414,14 @@
                 </div>
             </div>
         </fieldset>
+
+        <div class="submit-row">
+            <p class="deletelink-box">
+              <a class="deletelink cancel-link" href="javascript://">{% trans "Clear Queue" %}</a>
+            </p>
+            <input class="default" type="submit" name="_save" value='{% trans "Upload" %}' />
+        </div>
+
         <fieldset class="module aligned collapse closed">
             <h2>{% trans "Help" %}</h2>
             <div class="form-row">
@@ -288,14 +444,6 @@
                 </div>
             {% endif %}
         </fieldset>
-
-        <div class="submit-row">
-            <p class="deletelink-box">
-              <a class="deletelink cancel-link" href="javascript://">{% trans "Clear Queue" %}</a>
-            </p>
-            <input class="default" type="submit" name="_save" value='{% trans "Upload" %}' />
-        </div>
-
     </form>
 </div>
 {% endblock %}
